@@ -1,6 +1,7 @@
 package dev.agataw.miniecommerce.service;
 
 import dev.agataw.miniecommerce.dao.ProductDao;
+import dev.agataw.miniecommerce.dao.ProductDaoCollection;
 import dev.agataw.miniecommerce.model.Product;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 import java.rmi.NoSuchObjectException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -17,18 +19,21 @@ import java.util.List;
 @AllArgsConstructor
 public class ProductService {
 
-    ProductDao dao;
-    List<Product> products = new ArrayList<>();
+    ProductDao dao = new ProductDaoCollection();
 
-    public void getProduct(Long id){
+
+    public void getProduct(Long id) {
 
     }
-    public List<Product> getAllProducts(){
-        return products;
+
+    public Set<Product> getProducts(){
+        return dao.getAllProducts();
     }
 
-    public void addProduct(Product p){
-        dao.insert(p);
+    public void addProduct(Product p) {
+        if (p != null) {
+            dao.insert(p);
+        }
     }
 
     public void buyProduct(Product p, int amountToBuy) throws NoSuchObjectException {
@@ -38,7 +43,8 @@ public class ProductService {
         }
     }
 
-    public void deleteProduct(long id){
+    public void deleteProduct(long id) {
         dao.deleteProduct(id);
     }
+
 }

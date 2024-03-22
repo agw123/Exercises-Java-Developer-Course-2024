@@ -18,20 +18,21 @@ import static spark.Spark.*;
 @Log
 public class ProductController {
     ProductService productService = new ProductService();
-    List<Product> productsList = productService.getAllProducts();
+
     public void startWebServices() {
 
         get("/products", (req, res) -> {
             res.type("application/json");
-            HttpResponse response = new HttpResponse("200", (new Gson()).toJsonTree(productsList));
+            HttpResponse response = new HttpResponse("200", (new Gson()).toJsonTree(productService.getProducts()));
             return (new Gson()).toJson(response);
         });
 
         post("/product", (req, res) -> {
+
             Product p1 = new Product(1, "Cuffie",20, 3.40, "Lorem");
-            Product p2 = new Product(2, "Penna",2, 2, "Lorem");
             // Product productFromReq = (Product) (new Gson()).fromJson(req.body(), Product.class);
-            productsList.add(p1);
+            // productsList.add(p1);
+            productService.addProduct(p1);
             // productsList.add(p2);
             HttpResponse response = new HttpResponse("201", (new Gson()).toJsonTree(p1));
             // HttpResponse response2 = new HttpResponse("201", (new Gson()).toJsonTree(p2));
@@ -41,7 +42,7 @@ public class ProductController {
         put("/product", (req, res) -> {
             Product product = (new Gson()).fromJson(req.body(), Product.class);
             boolean find = false;
-            Iterator i = this.productsList.iterator();
+            Iterator i = productService.getProducts().iterator();
             while(i.hasNext()) {
                 Product p = (Product) i.next();
                 if (p.getId() == product.getId()) {
@@ -60,8 +61,8 @@ public class ProductController {
             String s = req.params("productID");
             Long paramID = Long.parseLong(s);
             System.out.println(paramID);
-            if (!this.productsList.isEmpty()){
-                Iterator<Product> i = this.productsList.iterator();
+            if (!productService.getProducts().isEmpty()){
+                Iterator<Product> i = productService.getProducts().iterator();
                 while(i.hasNext()) {
                     Product p = i.next();
                     if (p.getId() == paramID) {
